@@ -25,6 +25,7 @@ namespace jafp {
 
 const OvVideoMode OvVideoCapture::OV_MODE_320_240_30 = { 320, 240, 30, 1 };
 const OvVideoMode OvVideoCapture::OV_MODE_640_480_30 = { 640, 480, 30, 0 };
+const OvVideoMode OvVideoCapture::OV_MODE_320_240_120 = { 320, 240, 120, 0 };
 
 /*
 static void to_gray(const unsigned char* input, unsigned char* output, int length) {
@@ -36,8 +37,8 @@ static void to_gray(const unsigned char* input, unsigned char* output, int lengt
 }
 */
 
-OvVideoCapture::OvVideoCapture(const OvVideoMode& mode) 
-	: mode_(mode) { 
+OvVideoCapture::OvVideoCapture(const OvVideoMode& mode)
+	: mode_(mode) {
 }
 
 OvVideoCapture::~OvVideoCapture() {
@@ -68,13 +69,13 @@ bool OvVideoCapture::release() {
 	if (isOpened()) {
 		int i;
 		enum v4l2_buf_type type;
-		
+
 		type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 		ioctl (fd_, VIDIOC_STREAMOFF, &type);
 
 		for (i = 0; i < NumBuffers; i++) {
 			munmap(buffers_[i].start, buffers_[i].length);
-		}	
+		}
 		close (fd_);
 	}
 	return true;
@@ -93,7 +94,7 @@ bool OvVideoCapture::grab() {
 	memset (&capture_buf, 0, sizeof(capture_buf));
 	capture_buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	capture_buf.memory = V4L2_MEMORY_MMAP;
-	
+
 	if (ioctl(fd_, VIDIOC_DQBUF, &capture_buf) < 0) {
 		return false;
 	}
@@ -111,7 +112,7 @@ bool OvVideoCapture::grab() {
 bool OvVideoCapture::retrieve(cv::Mat& image) {
 	if (!grab()) {
 		return false;
-	}	
+	}
 
 	image.create(mode_.height, mode_.width, CV_8UC3);
 	//to_gray(buffer_, image.data, frame_size_);
@@ -139,7 +140,7 @@ bool OvVideoCapture::start_capturing() {
         }
         buffers_[i].length = buf.length;
         buffers_[i].offset = (size_t) buf.m.offset;
-        buffers_[i].start = static_cast<unsigned char*>(mmap (NULL, buffers_[i].length, 
+        buffers_[i].start = static_cast<unsigned char*>(mmap (NULL, buffers_[i].length,
         	PROT_READ | PROT_WRITE, MAP_SHARED, fd_, buffers_[i].offset));
 
 		memset (buffers_[i].start, 0xFF, buffers_[i].length);
@@ -161,14 +162,14 @@ bool OvVideoCapture::start_capturing() {
 	if (ioctl (fd_, VIDIOC_STREAMON, &type) < 0) {
 		return false;
 	}
-	
+
 	return true;
 }
 
 bool OvVideoCapture::open_internal() {
 	struct v4l2_format fmt;
 	struct v4l2_requestbuffers req;
-	struct v4l2_streamparm parm;	
+	struct v4l2_streamparm parm;
 	struct v4l2_crop crop;
 	v4l2_std_id id;
 	int input = DefaultInputNo;
@@ -180,7 +181,7 @@ bool OvVideoCapture::open_internal() {
 	if ((fd_ = ::open("/dev/video0", O_RDWR, 0)) < 0) {
 		return false;
 	}
-	
+
 	if (ioctl(fd_, VIDIOC_S_INPUT, &input) < 0) {
 		close(fd_);
 		return false;
@@ -198,18 +199,18 @@ bool OvVideoCapture::open_internal() {
 	parm.parm.capture.timeperframe.numerator = 1;
 	parm.parm.capture.timeperframe.denominator = mode_.framerate;
 	parm.parm.capture.capturemode = mode_.capture_mode;
-	
+
 	if (ioctl (fd_, VIDIOC_S_PARM, &parm) < 0) {
 		close(fd_);
 		return false;
 	}
-	
+
 	crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	crop.c.left = 0;
 	crop.c.top = 0;
 	crop.c.width = mode_.width;
 	crop.c.height = mode_.height;
-	
+
 	if (ioctl (fd_, VIDIOC_S_CROP, &crop) < 0) {
 		return false;
 	}
@@ -249,4 +250,3 @@ bool OvVideoCapture::open_internal() {
 }
 
 }
-

@@ -32,38 +32,39 @@ struct OvFrameBuffer {
 
 class OvVideoCapture {
 public:
-	
+
 	// Various constants
 	static const int NumBuffers = 4;
 	static const int DefaultInputNo = 1;
 	static const int DefaultFormat = V4L2_PIX_FMT_UYVY;
 	static const int DefaultFormatChannels = 2;
-	
+
 	// Modes
 	static const OvVideoMode OV_MODE_640_480_30;
 	static const OvVideoMode OV_MODE_320_240_30;
-	
+	static const OvVideoMode OV_MODE_320_240_120;
+
 	OvVideoCapture(const OvVideoMode& mode = OV_MODE_320_240_30);
 	virtual ~OvVideoCapture();
-	
+
 	// Opens the device (OV5640 sensor connected to the MIPI CSI2 channel).
 	// No parameters are given, as we expect the device to have a fixed device id
 	bool open();
-	
-	// Relase the device. 
+
+	// Relase the device.
 	// Free'es the internal frame buffer.
 	bool release();
-	
-	// Returns true if the device already has been opened. 
+
+	// Returns true if the device already has been opened.
 	inline bool isOpened() const { return is_opened_; }
-	
+
 	// Grabs a single frame from the image sensor
 	bool grab();
-	
+
 	// Decodes the grabbed video frame and returns it to the given
 	// image structure.
 	bool retrieve(cv::Mat& image);
-	
+
 	// Grabs, decodes and returns the grabbed image.
 	bool read(cv::Mat& image);
 
@@ -82,7 +83,7 @@ private:
 
 	// Use the iMX6 IPU to do color space conversion
 	// See http://github.com/jafp/imx6_ipu_csc
-	ipu_csc_t ipu_csc_;	
+	ipu_csc_t ipu_csc_;
 	ipu_csc_format_t ipu_input_format_;
 	ipu_csc_format_t ipu_output_format_;
 
