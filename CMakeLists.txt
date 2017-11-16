@@ -19,7 +19,7 @@ link_directories(
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -pedantic -mfp16-format=ieee")
 
 add_executable(
-	test
+	ov5640_test
 
 	src/main.cc
 	src/ipu_csc.c
@@ -27,7 +27,7 @@ add_executable(
 )
 
 target_link_libraries(
-	test
+	ov5640_test
 	opencv_core
 	opencv_highgui
 	opencv_imgcodecs
