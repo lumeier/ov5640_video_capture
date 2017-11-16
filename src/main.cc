@@ -12,7 +12,7 @@
 using namespace std;
 
 int main() {
-	
+
 	// Create Ov5640 capture device with 320x240 @ 30 fps format
 	jafp::OvVideoCapture capture(jafp::OvVideoCapture::OV_MODE_320_240_30);
 
@@ -29,10 +29,10 @@ int main() {
 		std::cout << "frame " << i << std::endl;
 
 		std::stringstream str;
-		str << "frames/frame_" << i << ".png";
+		str << "frames/frame_" << i << ".bmp";
 		cv::imwrite(str.str(), frame);
 	}
-	
+
 	capture.release();
 
 	return 0;
