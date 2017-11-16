@@ -6,7 +6,7 @@ PROJECT(ov_video_capture)
 SET(LICENSE "MIT")
 
 ######## Build and include settings ########
-include_directories(
+include_directories(include
 	$ENV{SDKTARGETSYSROOT}/usr/src/kernel/include/uapi
 	$ENV{SDKTARGETSYSROOT}/usr/src/kernel/include
 	$ENV{SDKTARGETSYSROOT}/usr/include
@@ -16,7 +16,7 @@ link_directories(
 	${LINK_DIRECTORIES}
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -pedantic")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -pedantic -mfp16-format=ieee")
 
 add_executable(
 	test
@@ -30,4 +30,5 @@ target_link_libraries(
 	test
 	opencv_core
 	opencv_highgui
+	opencv_imgcodecs
 )
