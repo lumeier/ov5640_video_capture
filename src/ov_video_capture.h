@@ -42,7 +42,6 @@ public:
 	// Modes
 	static const OvVideoMode OV_MODE_640_480_30;
 	static const OvVideoMode OV_MODE_320_240_30;
-	static const OvVideoMode OV_MODE_320_240_120;
 
 	OvVideoCapture(const OvVideoMode& mode = OV_MODE_320_240_30);
 	virtual ~OvVideoCapture();

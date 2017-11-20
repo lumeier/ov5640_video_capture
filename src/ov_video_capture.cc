@@ -25,7 +25,6 @@ namespace jafp {
 
 const OvVideoMode OvVideoCapture::OV_MODE_320_240_30 = { 320, 240, 30, 1 };
 const OvVideoMode OvVideoCapture::OV_MODE_640_480_30 = { 640, 480, 30, 0 };
-const OvVideoMode OvVideoCapture::OV_MODE_320_240_120 = { 320, 240, 120, 0 };
 
 /*
 static void to_gray(const unsigned char* input, unsigned char* output, int length) {
@@ -51,7 +50,7 @@ OvVideoCapture::~OvVideoCapture() {
 
 bool OvVideoCapture::open() {
 	ipu_input_format_ = { mode_.width, mode_.height, 16, V4L2_PIX_FMT_UYVY };
-	ipu_output_format_ = { mode_.width, mode_.height, 24, V4L2_PIX_FMT_BGR24 };
+        ipu_output_format_ = { mode_.width, mode_.height, 8, V4L2_PIX_FMT_GREY };
 
 	ipu_csc_init(&ipu_csc_, &ipu_input_format_, &ipu_output_format_);
 
@@ -113,8 +112,8 @@ bool OvVideoCapture::retrieve(cv::Mat& image) {
 	if (!grab()) {
 		return false;
 	}
-
-	image.create(mode_.height, mode_.width, CV_8UC3);
+//	image.create(mode_.height, mode_.width, CV_8UC3);
+	image.create(mode_.height, mode_.width, CV_8UC1);
 	//to_gray(buffer_, image.data, frame_size_);
 	ipu_csc_convert(&ipu_csc_, buffer_, image.data);
 
