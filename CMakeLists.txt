@@ -22,12 +22,18 @@ add_executable(
 	ov5640_test
 
 	src/main.cc
+
+)
+
+## Declare a C++ library
+add_library(camera_test
 	src/ipu_csc.c
 	src/ov_video_capture.cc
 )
 
 target_link_libraries(
 	ov5640_test
+	camera_test
 	opencv_core
 	opencv_highgui
 	opencv_imgcodecs
