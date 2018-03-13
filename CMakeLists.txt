@@ -24,6 +24,7 @@ add_executable(
 	src/main.cc
 	src/ipu_csc.c
 	src/ov_video_capture.cc
+	src/ov7251_capture.cc
 )
 
 target_link_libraries(
